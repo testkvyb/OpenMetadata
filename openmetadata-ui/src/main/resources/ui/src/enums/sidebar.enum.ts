@@ -30,4 +30,5 @@ export enum SidebarItem {
   LOGOUT = 'logout',
   METRICS = 'metrics',
   LINEAGE = 'lineage',
+  ACCESS_REQUESTS = 'access-requests'
 }

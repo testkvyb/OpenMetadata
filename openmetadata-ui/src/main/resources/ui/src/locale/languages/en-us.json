@@ -1939,7 +1939,23 @@
     "your-entity": "Your {{entity}}",
     "z-to-a": "Z to A",
     "zoom-in": "Zoom In",
-    "zoom-out": "Zoom Out"
+    "zoom-out": "Zoom Out",
+    "access-duration": "Access Duration",
+    "access-request": "Access Request", 
+    "access-request-plural": "Access Requests",
+    "data-access": "Data Access",
+    "data-access-request": "Data Access Request",
+    "data-access-request-plural": "Data Access Requests",
+    "start-date": "Start Date",
+    "character-plural": "characters",
+    "remaining": "remaining",
+    "purpose": "Purpose",
+    "priority": "Priority",
+    "note-plural": "Notes",
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "critical": "Critical"
   },
   "message": {
     "access-block-time-message": "Access will be blocked for milliseconds after max failed login attempts performed.",
@@ -2708,7 +2724,17 @@
     "write-your-announcement-lowercase": "write your announcement",
     "write-your-description": "Write your description",
     "write-your-text": "Write your {{text}}",
-    "you-can-also-set-up-the-metadata-ingestion": "You can also set up the metadata ingestion."
+    "you-can-also-set-up-the-metadata-ingestion": "You can also set up the metadata ingestion.",
+    "data-access-request-description": "Submit a request to access specific data assets for your project or analysis.",
+    "enter-purpose-placeholder": "Please describe why you need access to this data asset and how you plan to use it...",
+    "enter-notes-placeholder": "Add any additional information that might help with the approval process...",
+    "access-duration-range-error": "Access duration must be between {{min}} and {{max}} days",
+    "access-duration-range-info": "You can request access for a period between {{min}} and {{max}} days",
+    "minimum-length-field": "{{field}} must be at least {{length}} characters",
+    "maximum-length-field": "{{field}} cannot exceed {{length}} characters",
+    "minimum-duration-error": "Access duration must be at least {{min}} days",
+    "maximum-duration-error": "Access duration cannot exceed {{max}} days",
+    "adding-new-standard": "Adding new standard on {{categoryName}}"
   },
   "server": {
     "account-verify-success": "Email verified successfully",

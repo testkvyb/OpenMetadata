@@ -285,6 +285,12 @@ const AddMetricPage = withSuspenseFallback(
   )
 );
 
+const  CreateDataAccessRequestPage = withSuspenseFallback(
+  React.lazy(
+    () => import('../../pages/DataAccessRequestPage/CreateDataAccessRequestPage')
+  )
+)
+
 const AuthenticatedAppRouter: FunctionComponent = () => {
   const { permissions } = usePermissionProvider();
   const { t } = useTranslation();
@@ -757,6 +763,16 @@ const AuthenticatedAppRouter: FunctionComponent = () => {
         path={ROUTES.FORGOT_PASSWORD}
       />
       <Route element={<Navigate to={ROUTES.NOT_FOUND} />} path="*" />
+
+      <Route
+        element={<CreateDataAccessRequestPage />}
+        path={ROUTES.SUBMIT_DATA_ACCESS_REQUEST}
+      />
+
+      <Route
+        element={<GovernancePolicyManagerPage pageTitle={t('label.policy-manager')} />}
+        path={ROUTES.POLICY_MANAGER}
+      />
     </Routes>
   );
 };

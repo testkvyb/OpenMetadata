@@ -321,6 +321,9 @@ export const ROUTES = {
 
   // Settings
   SETTINGS_SSO: '/settings/sso',
+
+  // Access Requests
+  SUBMIT_DATA_ACCESS_REQUEST: '/data-access-request/submit-request',
 };
 
 export const SOCKET_EVENTS = {

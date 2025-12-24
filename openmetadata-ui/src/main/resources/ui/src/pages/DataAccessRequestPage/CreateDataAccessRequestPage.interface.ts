@@ -1,0 +1,43 @@
+/*
+ *  Copyright 2025 Collate.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+import { DateTime } from 'luxon';
+import { TagLabel } from '../../generated/type/tagLabel';
+
+export enum PriorityLevel {
+  NONE = 'none',
+  LOW = 'low',
+  NORMAL = 'normal',
+  HIGH = 'high',
+  CRITICAL = 'critical',
+}
+
+export interface DataAccessRequestFormData {
+  dataAsset?: TagLabel;
+  purpose: string;
+  accessDuration: [DateTime | null, DateTime | null];
+  notes?: string;
+  priority: PriorityLevel;
+}
+
+export interface DataAccessRequest {
+  id?: string;
+  dataAssetFQN: string;
+  purpose: string;
+  startDate: string;
+  endDate: string;
+  notes?: string;
+  priority: PriorityLevel;
+  createdBy?: string;
+  createdAt?: string;
+}

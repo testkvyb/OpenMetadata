@@ -27,6 +27,7 @@ import { ReactComponent as SettingsIcon } from '../assets/svg/ic-settings-v1.svg
 import { ReactComponent as InsightsIcon } from '../assets/svg/lamp-charge.svg';
 import { ReactComponent as LogoutIcon } from '../assets/svg/logout.svg';
 import { ReactComponent as MetricIcon } from '../assets/svg/metric.svg';
+import { ReactComponent as AccessRequestIcon } from '../assets/svg/request-icon.svg';
 import { LeftSidebarItem } from '../components/MyData/LeftSidebar/LeftSidebar.interface';
 import { SidebarItem } from '../enums/sidebar.enum';
 import { DataInsightTabs } from '../interface/data-insight.interface';
@@ -157,6 +158,13 @@ export const SIDEBAR_LIST: Array<LeftSidebarItem> = [
         dataTestId: `app-bar-item-${SidebarItem.METRICS}`,
       },
     ],
+  },
+  {
+    key: ROUTES.SUBMIT_DATA_ACCESS_REQUEST,
+    title: 'label.access-request-plural',
+    redirect_url: ROUTES.SUBMIT_DATA_ACCESS_REQUEST,
+    icon: AccessRequestIcon,
+    dataTestId: `app-bar-item-${SidebarItem.ACCESS_REQUESTS}`,
   },
 ];
 
