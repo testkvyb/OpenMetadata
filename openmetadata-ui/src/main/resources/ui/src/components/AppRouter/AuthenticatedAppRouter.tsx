@@ -32,6 +32,8 @@ import { useApplicationsProvider } from '../Settings/Applications/ApplicationsPr
 import { RoutePosition } from '../Settings/Applications/plugins/AppPlugin';
 import AdminProtectedRoute from './AdminProtectedRoute';
 import withSuspenseFallback from './withSuspenseFallback';
+import DataAccessRequestListPage from '../../pages/DataAccessRequestPage/DataAccessRequestListPage';
+import DataAccessRequestDetailsPage from '../../pages/DataAccessRequestPage/DataAccessRequestDetailsPage';
 
 const DomainRouter = withSuspenseFallback(
   React.lazy(
@@ -770,8 +772,13 @@ const AuthenticatedAppRouter: FunctionComponent = () => {
       />
 
       <Route
-        element={<GovernancePolicyManagerPage pageTitle={t('label.policy-manager')} />}
-        path={ROUTES.POLICY_MANAGER}
+        element={<DataAccessRequestListPage />}
+        path={ROUTES.DATA_ACCESS_REQUESTS_LIST}
+      />
+
+      <Route
+        element={<DataAccessRequestDetailsPage />}
+        path={ROUTES.DATA_ACCESS_REQUEST_DETAILS}
       />
     </Routes>
   );

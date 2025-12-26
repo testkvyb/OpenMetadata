@@ -162,7 +162,7 @@ export const SIDEBAR_LIST: Array<LeftSidebarItem> = [
   {
     key: ROUTES.SUBMIT_DATA_ACCESS_REQUEST,
     title: 'label.access-request-plural',
-    redirect_url: ROUTES.SUBMIT_DATA_ACCESS_REQUEST,
+    redirect_url: ROUTES.DATA_ACCESS_REQUESTS_LIST,
     icon: AccessRequestIcon,
     dataTestId: `app-bar-item-${SidebarItem.ACCESS_REQUESTS}`,
   },

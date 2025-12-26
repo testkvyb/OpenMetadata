@@ -324,6 +324,9 @@ export const ROUTES = {
 
   // Access Requests
   SUBMIT_DATA_ACCESS_REQUEST: '/data-access-request/submit-request',
+  DATA_ACCESS_REQUESTS_LIST: 'data-access-request/requests',
+  DATA_ACCESS_REQUEST_DETAILS: `/data-access-request/${PLACEHOLDER_ROUTE_ID}`,
+
 };
 
 export const SOCKET_EVENTS = {
