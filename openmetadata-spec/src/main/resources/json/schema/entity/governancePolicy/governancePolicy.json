@@ -1,0 +1,150 @@
+{
+  "$id": "https://open-metadata.org/schema/entity/governancePolicy/governancePolicy.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Governance Policy",
+  "$comment": "@om-entity-type",
+  "description": "A `Governance Policy` entity represents a high-level governance rule that defines standards, requirements, and guidelines for data management, security, quality, and compliance within an organization.",
+  "type": "object",
+  "javaType": "org.openmetadata.schema.entity.governancePolicy.GovernancePolicy",
+  "javaInterfaces": ["org.openmetadata.schema.EntityInterface"],
+  "definitions": {
+    "policyType": {
+      "description": "Type of governance policy",
+      "type": "string",
+      "enum": [
+        "SECURITY",
+        "DATA_QUALITY",
+        "RETENTION",
+        "PRIVACY"
+      ]
+    },
+    "policyStatus": {
+      "description": "Current status of the policy lifecycle",
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "ACTIVE",
+        "DEPRECATED",
+        "UNDER_REVIEW"
+      ]
+    }
+  },
+  "properties": {
+    "id": {
+      "description": "Unique identifier of this governance policy instance.",
+      "$ref": "../../type/basic.json#/definitions/uuid"
+    },
+    "name": {
+      "description": "A unique name that identifies the governance policy.",
+      "$ref": "../../type/basic.json#/definitions/entityName"
+    },
+    "fullyQualifiedName": {
+      "description": "FullyQualifiedName same as `name`.",
+      "$ref": "../../type/basic.json#/definitions/fullyQualifiedEntityName"
+    },
+    "displayName": {
+      "description": "Display Name that identifies this governance policy.",
+      "type": "string"
+    },
+    "description": {
+      "description": "Description of the governance policy.",
+      "$ref": "../../type/basic.json#/definitions/markdown"
+    },
+    "policyType": {
+      "description": "Type of governance policy (SECURITY, DATA_QUALITY, RETENTION, PRIVACY).",
+      "$ref": "#/definitions/policyType"
+    },
+    "status": {
+      "description": "Current status of the policy (DRAFT, ACTIVE, DEPRECATED, UNDER_REVIEW).",
+      "$ref": "#/definitions/policyStatus",
+      "default": "DRAFT"
+    },
+    "domain": {
+      "description": "Business domain or area this policy applies to (e.g., Finance, Healthcare).",
+      "type": "string"
+    },
+    "reviewDate": {
+      "description": "Next scheduled review date for this policy in Unix epoch time milliseconds.",
+      "$ref": "../../type/basic.json#/definitions/timestamp"
+    },
+    "mutuallyExclusive": {
+      "description": "When `true`, assets can only be associated with one standard from this policy. When `false`, multiple standards from this policy can be applied simultaneously.",
+      "type": "boolean",
+      "default": false
+    },
+    "version": {
+      "description": "Metadata version of the entity.",
+      "$ref": "../../type/entityHistory.json#/definitions/entityVersion"
+    },
+    "updatedAt": {
+      "description": "Last update time corresponding to the new version of the entity in Unix epoch time milliseconds.",
+      "$ref": "../../type/basic.json#/definitions/timestamp"
+    },
+    "updatedBy": {
+      "description": "User who made the update.",
+      "type": "string"
+    },
+    "impersonatedBy": {
+      "description": "Bot user that performed the action on behalf of the actual user.",
+      "$ref": "../../type/basic.json#/definitions/impersonatedBy"
+    },
+    "href": {
+      "description": "Link to the resource corresponding to this governance policy.",
+      "$ref": "../../type/basic.json#/definitions/href"
+    },
+    "owners": {
+      "description": "Owners of this governance policy.",
+      "$ref": "../../type/entityReferenceList.json"
+    },
+    "reviewers": {
+      "description": "User references of the reviewers for this policy.",
+      "$ref": "../../type/entityReferenceList.json"
+    },
+    "standards": {
+      "description": "Standards that implement this governance policy. This field is populated only when requested via the 'fields' query parameter.",
+      "$ref": "../../type/entityReferenceList.json"
+    },
+    "domains": {
+      "description": "Domains this governance policy belongs to.",
+      "$ref": "../../type/entityReferenceList.json"
+    },
+    "tags": {
+      "description": "Tags associated with this governance policy.",
+      "type": "array",
+      "items": {
+        "$ref": "../../type/tagLabel.json"
+      },
+      "default": []
+    },
+    "changeDescription": {
+      "description": "Change that lead to this version of the entity.",
+      "$ref": "../../type/entityHistory.json#/definitions/changeDescription"
+    },
+    "incrementalChangeDescription": {
+      "description": "Change that lead to this version of the entity.",
+      "$ref": "../../type/entityHistory.json#/definitions/changeDescription"
+    },
+    "deleted": {
+      "description": "When `true` indicates the entity has been soft deleted.",
+      "type": "boolean",
+      "default": false
+    },
+    "extension": {
+      "description": "Entity extension data with custom attributes added to the entity.",
+      "$ref": "../../type/basic.json#/definitions/entityExtension"
+    },
+    "provider": {
+      "description": "Provider type for this governance policy (system or user).",
+      "$ref": "../../type/basic.json#/definitions/providerType"
+    },
+    "disabled": {
+      "description": "System governance policies can't be deleted. Use this flag to disable them.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": ["id", "name", "description", "policyType"],
+  "additionalProperties": false
+}
+
+

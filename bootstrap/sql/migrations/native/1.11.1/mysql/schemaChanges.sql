@@ -77,3 +77,28 @@ CREATE TABLE IF NOT EXISTS data_access_request (
 
 CREATE INDEX idx_data_access_request_created_by ON data_access_request (created_by);
 CREATE INDEX idx_data_access_request_data_asset_fqn ON data_access_request (data_asset_fqn);
+
+CREATE TABLE IF NOT EXISTS governance_policy (
+  `id` VARCHAR(36) GENERATED ALWAYS AS (json_unquote(json_extract(`json`, '$.id'))) STORED NOT NULL,
+  `name` VARCHAR(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`, '$.name'))) VIRTUAL NOT NULL,
+  `json` JSON NOT NULL,
+  `updatedAt` BIGINT UNSIGNED GENERATED ALWAYS AS (json_unquote(json_extract(`json`, '$.updatedAt'))) VIRTUAL NOT NULL,
+  `updatedBy` VARCHAR(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`, '$.updatedBy'))) VIRTUAL NOT NULL,
+  `deleted` TINYINT(1) GENERATED ALWAYS AS (json_extract(`json`, '$.deleted')) VIRTUAL,
+  `nameHash` VARCHAR(256) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+  UNIQUE KEY `nameHash` (`nameHash`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Create governance_standard table for storing governance standards (children of policies)
+CREATE TABLE IF NOT EXISTS governance_standard (
+  `id` VARCHAR(36) GENERATED ALWAYS AS (json_unquote(json_extract(`json`, '$.id'))) STORED NOT NULL,
+  `json` JSON NOT NULL,
+  `updatedAt` BIGINT UNSIGNED GENERATED ALWAYS AS (json_unquote(json_extract(`json`, '$.updatedAt'))) VIRTUAL NOT NULL,
+  `updatedBy` VARCHAR(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`, '$.updatedBy'))) VIRTUAL NOT NULL,
+  `deleted` TINYINT(1) GENERATED ALWAYS AS (json_extract(`json`, '$.deleted')) VIRTUAL,
+  `fqnHash` VARCHAR(768) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+  `name` VARCHAR(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`, '$.name'))) VIRTUAL NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `fqnHash` (`fqnHash`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+

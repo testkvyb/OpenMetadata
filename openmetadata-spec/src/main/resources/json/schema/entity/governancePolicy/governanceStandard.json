@@ -1,0 +1,91 @@
+{
+  "$id": "https://open-metadata.org/schema/entity/governancePolicy/governanceStandard.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Governance Standard",
+  "$comment": "@om-entity-type",
+  "description": "A `Governance Standard` entity represents a specific rule, requirement, or guideline that implements a Governance Policy. Each standard belongs to a parent Governance Policy.",
+  "type": "object",
+  "javaType": "org.openmetadata.schema.entity.governancePolicy.GovernanceStandard",
+  "javaInterfaces": ["org.openmetadata.schema.EntityInterface"],
+  "properties": {
+    "id": {
+      "description": "Unique identifier of this governance standard instance.",
+      "$ref": "../../type/basic.json#/definitions/uuid"
+    },
+    "name": {
+      "description": "A unique name that identifies the governance standard within its parent policy.",
+      "$ref": "../../type/basic.json#/definitions/entityName"
+    },
+    "fullyQualifiedName": {
+      "description": "FullyQualifiedName in the format `PolicyName.StandardName`.",
+      "$ref": "../../type/basic.json#/definitions/fullyQualifiedEntityName"
+    },
+    "displayName": {
+      "description": "Display Name that identifies this governance standard.",
+      "type": "string"
+    },
+    "description": {
+      "description": "Description of the governance standard.",
+      "$ref": "../../type/basic.json#/definitions/markdown"
+    },
+    "parent": {
+      "description": "Reference to the parent Governance Policy that contains this standard.",
+      "$ref": "../../type/entityReference.json"
+    },
+    "version": {
+      "description": "Metadata version of the entity.",
+      "$ref": "../../type/entityHistory.json#/definitions/entityVersion"
+    },
+    "updatedAt": {
+      "description": "Last update time corresponding to the new version of the entity in Unix epoch time milliseconds.",
+      "$ref": "../../type/basic.json#/definitions/timestamp"
+    },
+    "updatedBy": {
+      "description": "User who made the update.",
+      "type": "string"
+    },
+    "impersonatedBy": {
+      "description": "Bot user that performed the action on behalf of the actual user.",
+      "$ref": "../../type/basic.json#/definitions/impersonatedBy"
+    },
+    "href": {
+      "description": "Link to the resource corresponding to this governance standard.",
+      "$ref": "../../type/basic.json#/definitions/href"
+    },
+    "owners": {
+      "description": "Owners of this governance standard.",
+      "$ref": "../../type/entityReferenceList.json"
+    },
+    "tags": {
+      "description": "Tags associated with this governance standard.",
+      "type": "array",
+      "items": {
+        "$ref": "../../type/tagLabel.json"
+      },
+      "default": []
+    },
+    "changeDescription": {
+      "description": "Change that lead to this version of the entity.",
+      "$ref": "../../type/entityHistory.json#/definitions/changeDescription"
+    },
+    "incrementalChangeDescription": {
+      "description": "Change that lead to this version of the entity.",
+      "$ref": "../../type/entityHistory.json#/definitions/changeDescription"
+    },
+    "deleted": {
+      "description": "When `true` indicates the entity has been soft deleted.",
+      "type": "boolean",
+      "default": false
+    },
+    "extension": {
+      "description": "Entity extension data with custom attributes added to the entity.",
+      "$ref": "../../type/basic.json#/definitions/entityExtension"
+    },
+    "provider": {
+      "description": "Provider type for this governance standard (system or user).",
+      "$ref": "../../type/basic.json#/definitions/providerType"
+    }
+  },
+  "required": ["id", "name", "description", "parent"],
+  "additionalProperties": false
+}

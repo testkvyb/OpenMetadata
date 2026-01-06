@@ -1,0 +1,76 @@
+{
+  "$id": "https://open-metadata.org/schema/api/governancePolicy/createGovernancePolicy.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CreateGovernancePolicyRequest",
+  "description": "Create governance policy request",
+  "type": "object",
+  "javaType": "org.openmetadata.schema.api.governancePolicy.CreateGovernancePolicy",
+  "javaInterfaces": ["org.openmetadata.schema.CreateEntity"],
+
+  "properties": {
+    "name": {
+      "description": "A unique name that identifies the governance policy.",
+      "$ref": "../../type/basic.json#/definitions/entityName"
+    },
+    "displayName": {
+      "description": "Display Name that identifies this governance policy.",
+      "type": "string"
+    },
+    "description": {
+      "description": "Description of the governance policy.",
+      "$ref": "../../type/basic.json#/definitions/markdown"
+    },
+    "policyType": {
+      "description": "Type of governance policy (SECURITY, DATA_QUALITY, RETENTION, PRIVACY).",
+      "$ref": "../../entity/governancePolicy/governancePolicy.json#/definitions/policyType"
+    },
+    "status": {
+      "description": "Current status of the policy (DRAFT, ACTIVE, DEPRECATED, UNDER_REVIEW).",
+      "$ref": "../../entity/governancePolicy/governancePolicy.json#/definitions/policyStatus",
+      "default": "DRAFT"
+    },
+    "domain": {
+      "description": "Business domain or area this policy applies to (e.g., Finance, Healthcare).",
+      "type": "string"
+    },
+    "reviewDate": {
+      "description": "Next scheduled review date for this policy in Unix epoch time milliseconds.",
+      "$ref": "../../type/basic.json#/definitions/timestamp"
+    },
+    "mutuallyExclusive": {
+      "description": "When `true`, assets can only be associated with one standard from this policy. When `false`, multiple standards from this policy can be applied simultaneously.",
+      "type": "boolean",
+      "default": false
+    },
+    "provider": {
+      "description": "Provider type for this governance policy (system or user).",
+      "$ref": "../../type/basic.json#/definitions/providerType"
+    },
+    "domains": {
+      "description": "Fully qualified names of the domains the Governance Policy belongs to.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "owners": {
+      "description": "Owners of this governance policy.",
+      "$ref": "../../type/entityReferenceList.json",
+      "default": null
+    },
+    "reviewers": {
+      "description": "User references of the reviewers for this policy.",
+      "$ref": "../../type/entityReferenceList.json"
+    },
+    "tags": {
+      "description": "Tags associated with this governance policy.",
+      "type": "array",
+      "items": {
+        "$ref": "../../type/tagLabel.json"
+      },
+      "default": []
+    }
+  },
+  "required": ["name", "description", "policyType"],
+  "additionalProperties": false
+}

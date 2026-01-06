@@ -369,6 +369,16 @@ export const getTagPath = (fqn?: string) => {
   return path;
 };
 
+export const getGovernancePolicyPath = (fqn?: string) => {
+  let path = ROUTES.GOVERNANCE_POLICY;
+  if (fqn) {
+    path = ROUTES.GOVERNANCE_POLICY_DETAILS;
+    path = path.replace(PLACEHOLDER_ROUTE_FQN, getEncodedFqn(fqn));
+  }
+
+  return path;
+};
+
 export const getAddCustomMetricPath = (
   dashboardType: ProfilerDashboardType,
   fqn: string
@@ -963,3 +973,4 @@ export const getLogEntityPath = (
     getServiceRouteFromServiceType(logEntityType as ServiceTypes)
   );
 };
+

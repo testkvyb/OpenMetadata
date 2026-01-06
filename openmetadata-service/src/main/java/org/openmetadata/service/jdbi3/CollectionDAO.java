@@ -89,6 +89,8 @@ import org.openmetadata.schema.entity.app.AppMarketPlaceDefinition;
 import org.openmetadata.schema.entity.automations.Workflow;
 import org.openmetadata.schema.entity.classification.Classification;
 import org.openmetadata.schema.entity.classification.Tag;
+import org.openmetadata.schema.entity.governancePolicy.GovernancePolicy;
+import org.openmetadata.schema.entity.governancePolicy.GovernanceStandard;
 import org.openmetadata.schema.entity.data.APICollection;
 import org.openmetadata.schema.entity.data.APIEndpoint;
 import org.openmetadata.schema.entity.data.Chart;
@@ -243,6 +245,12 @@ public interface CollectionDAO {
 
   @CreateSqlObject
   ClassificationDAO classificationDAO();
+
+  @CreateSqlObject
+  GovernancePolicyDAO governancePolicyDAO();
+
+  @CreateSqlObject
+  GovernanceStandardDAO governanceStandardDAO();
 
   @CreateSqlObject
   TableDAO tableDAO();
@@ -4387,6 +4395,40 @@ public interface CollectionDAO {
       public Pair<String, Integer> map(ResultSet rs, StatementContext ctx) throws SQLException {
         return Pair.of(rs.getString("classificationHash"), rs.getInt("termCount"));
       }
+    }
+  }
+
+  interface GovernancePolicyDAO extends EntityDAO<GovernancePolicy> {
+    @Override
+    default String getTableName() {
+      return "governance_policy";
+    }
+
+    @Override
+    default Class<GovernancePolicy> getEntityClass() {
+      return GovernancePolicy.class;
+    }
+
+    @Override
+    default String getNameHashColumn() {
+      return "nameHash";
+    }
+  }
+
+  interface GovernanceStandardDAO extends EntityDAO<GovernanceStandard> {
+    @Override
+    default String getTableName() {
+      return "governance_standard";
+    }
+
+    @Override
+    default Class<GovernanceStandard> getEntityClass() {
+      return GovernanceStandard.class;
+    }
+
+    @Override
+    default String getNameHashColumn() {
+      return "fqnHash";
     }
   }
 
@@ -8611,3 +8653,4 @@ public interface CollectionDAO {
     }
   }
 }
+

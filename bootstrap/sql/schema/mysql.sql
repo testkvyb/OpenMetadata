@@ -1161,3 +1161,44 @@ CREATE TABLE `web_analytic_event` (
   UNIQUE KEY `fqnHash` (`fqnHash`),
   KEY `name_index` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `governance_policy`
+--
+
+DROP TABLE IF EXISTS `governance_policy`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `governance_policy` (
+  `id` varchar(36) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.id'))) STORED NOT NULL,
+  `name` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.name'))) VIRTUAL NOT NULL,
+  `json` json NOT NULL,
+  `updatedAt` bigint unsigned GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.updatedAt'))) VIRTUAL NOT NULL,
+  `updatedBy` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.updatedBy'))) VIRTUAL NOT NULL,
+  `deleted` tinyint(1) GENERATED ALWAYS AS (json_extract(`json`,_utf8mb4'$.deleted')) VIRTUAL,
+  `nameHash` varchar(256) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+  UNIQUE KEY `nameHash` (`nameHash`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `governance_standard`
+--
+
+DROP TABLE IF EXISTS `governance_standard`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `governance_standard` (
+  `id` varchar(36) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.id'))) STORED NOT NULL,
+  `json` json NOT NULL,
+  `updatedAt` bigint unsigned GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.updatedAt'))) VIRTUAL NOT NULL,
+  `updatedBy` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.updatedBy'))) VIRTUAL NOT NULL,
+  `deleted` tinyint(1) GENERATED ALWAYS AS (json_extract(`json`,_utf8mb4'$.deleted')) VIRTUAL,
+  `fqnHash` varchar(768) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+  `name` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.name'))) VIRTUAL NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `fqnHash` (`fqnHash`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;

@@ -417,6 +417,39 @@ CREATE TABLE public.glossary_term_entity (
 
 ALTER TABLE public.glossary_term_entity OWNER TO openmetadata_user;
 
+
+CREATE TABLE public.governance_policy (
+    id character varying(36) GENERATED ALWAYS AS ((json ->> 'id'::text)) STORED NOT NULL,
+    name character varying(256) GENERATED ALWAYS AS ((json ->> 'name'::text)) STORED NOT NULL,
+    json jsonb NOT NULL,
+    updatedat bigint GENERATED ALWAYS AS (((json ->> 'updatedAt'::text))::bigint) STORED NOT NULL,
+    updatedby character varying(256) GENERATED ALWAYS AS ((json ->> 'updatedBy'::text)) STORED NOT NULL,
+    deleted boolean GENERATED ALWAYS AS (((json ->> 'deleted'::text))::boolean) STORED,
+    namehash character varying(256) NOT NULL
+);
+
+
+ALTER TABLE public.governance_policy OWNER TO openmetadata_user;
+
+
+
+--
+-- Name: governance_standard; Type: TABLE; Schema: public; Owner: openmetadata_user
+--
+
+CREATE TABLE public.governance_standard (
+    id character varying(36) GENERATED ALWAYS AS ((json ->> 'id'::text)) STORED NOT NULL,
+    json jsonb NOT NULL,
+    updatedat bigint GENERATED ALWAYS AS (((json ->> 'updatedAt'::text))::bigint) STORED NOT NULL,
+    updatedby character varying(256) GENERATED ALWAYS AS ((json ->> 'updatedBy'::text)) STORED NOT NULL,
+    deleted boolean GENERATED ALWAYS AS (((json ->> 'deleted'::text))::boolean) STORED,
+    fqnhash character varying(768) NOT NULL,
+    name character varying(256) GENERATED ALWAYS AS ((json ->> 'name'::text)) STORED NOT NULL
+);
+
+
+ALTER TABLE public.governance_standard OWNER TO openmetadata_user;
+
 --
 -- Name: ingestion_pipeline_entity; Type: TABLE; Schema: public; Owner: openmetadata_user
 --

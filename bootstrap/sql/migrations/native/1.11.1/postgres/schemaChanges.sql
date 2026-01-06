@@ -63,3 +63,16 @@ SET json = jsonb_set(
     true
 )
 WHERE configtype = 'workflowSettings';
+
+-- Create governance_standard table for storing governance standards (children of policies)
+CREATE TABLE IF NOT EXISTS governance_standard (
+  id VARCHAR(36) GENERATED ALWAYS AS ((json ->> 'id'::text)) STORED NOT NULL,
+  json JSONB NOT NULL,
+  updatedAt BIGINT GENERATED ALWAYS AS (((json ->> 'updatedAt'::text))::BIGINT) STORED NOT NULL,
+  updatedBy VARCHAR(256) GENERATED ALWAYS AS ((json ->> 'updatedBy'::text)) STORED NOT NULL,
+  deleted BOOLEAN GENERATED ALWAYS AS (((json ->> 'deleted'::text))::BOOLEAN) STORED,
+  fqnHash VARCHAR(768) NOT NULL,
+  name VARCHAR(256) GENERATED ALWAYS AS ((json ->> 'name'::text)) STORED NOT NULL,
+  PRIMARY KEY (id),
+  CONSTRAINT unique_governance_standard_fqnHash UNIQUE (fqnHash)
+);

@@ -66,6 +66,14 @@ const ClassificationRouter = withSuspenseFallback(
       )
   )
 );
+const GovernancePolicyRouter = withSuspenseFallback(
+  React.lazy(
+    () =>
+      import(
+        /* webpackChunkName: "GovernancePolicyRouter" */ './GovernancePolicyRouter'
+      )
+  )
+);
 const GlossaryRouter = withSuspenseFallback(
   React.lazy(
     () =>
@@ -728,6 +736,7 @@ const AuthenticatedAppRouter: FunctionComponent = () => {
         path={ROUTES.CUSTOMIZE_PAGE}
       />
       <Route element={<ClassificationRouter />} path="/tags/*" />
+      <Route element={<GovernancePolicyRouter />} path="/governance-policies/*" />
       <Route element={<TagPage />} path={ROUTES.TAG_ITEM} />
       <Route element={<TagPage />} path={ROUTES.TAG_ITEM_WITH_TAB} />
       <Route element={<TagPage />} path={ROUTES.TAG_ITEM_WITH_SUB_TAB} />
@@ -785,3 +794,4 @@ const AuthenticatedAppRouter: FunctionComponent = () => {
 };
 
 export default AuthenticatedAppRouter;
+

@@ -25,6 +25,7 @@ export enum SidebarItem {
   GOVERNANCE = 'governance',
   GLOSSARY = 'glossary',
   TAGS = 'tags',
+  GOVERNANCE_POLICY='governance-policy',
   INSIGHTS = 'insights',
   SETTINGS = 'settings',
   LOGOUT = 'logout',

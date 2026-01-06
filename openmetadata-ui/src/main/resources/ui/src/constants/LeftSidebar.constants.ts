@@ -14,6 +14,7 @@
 import { Cube01 } from '@untitledui/icons';
 import { ReactComponent as GovernIcon } from '../assets/svg/bank.svg';
 import { ReactComponent as ClassificationIcon } from '../assets/svg/classification.svg';
+import { ReactComponent as GovernancePolicyIcon } from '../assets/svg/glossary.svg';
 import { ReactComponent as ExploreIcon } from '../assets/svg/explore.svg';
 import { ReactComponent as GlossaryIcon } from '../assets/svg/glossary.svg';
 import { ReactComponent as AlertIcon } from '../assets/svg/ic-alert.svg';
@@ -149,6 +150,13 @@ export const SIDEBAR_LIST: Array<LeftSidebarItem> = [
         redirect_url: ROUTES.TAGS,
         icon: ClassificationIcon,
         dataTestId: `app-bar-item-${SidebarItem.TAGS}`,
+      },
+      {
+        key: ROUTES.GOVERNANCE_POLICY,
+        title: 'label.governance-policy-plural',
+        redirect_url: ROUTES.GOVERNANCE_POLICY,
+        icon: GovernancePolicyIcon,
+        dataTestId: `app-bar-item-${SidebarItem.GOVERNANCE_POLICY}`,
       },
       {
         key: ROUTES.METRICS,

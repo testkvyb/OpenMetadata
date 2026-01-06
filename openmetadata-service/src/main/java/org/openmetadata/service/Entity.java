@@ -203,7 +203,9 @@ public final class Entity {
   public static final String WEB_ANALYTIC_EVENT = "webAnalyticEvent";
   public static final String DATA_INSIGHT_CUSTOM_CHART = "dataInsightCustomChart";
   public static final String DATA_INSIGHT_CHART = "dataInsightChart";
-  public static final String PAGE = "page";
+  public static final String PAGE = "page";  
+  public static final String GOVERNANCE_POLICY = "governancePolicy";
+  public static final String GOVERNANCE_STANDARD = "governanceStandard";
 
   //
   // Policy entity

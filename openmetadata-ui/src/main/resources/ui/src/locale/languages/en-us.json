@@ -1958,7 +1958,16 @@
     "critical": "Critical",
     "data-access-request-id": "Request ID",
     "data-access-request-action-plural": "Request Actions",
-    "create-data-access-request": "Create Data Access Request"
+    "create-data-access-request": "Create Data Access Request",
+    "governance-policy": "Governance Policy",
+    "governance-policy-plural": "Governance Policies",
+    "governance-policy-lowercase": "governance policy",
+    "governance-policy-lowercase-plural": "governance policies",
+    "governance-standard": "Governance Standard",
+    "governance-standard-plural": "Governance Standards",
+    "governance-standard-lowercase": "governance standard",
+    "governance-standard-lowercase-plural": "governance standards",
+    "adding-new-governance-policy": "Adding New Governance Policy"
   },
   "message": {
     "access-block-time-message": "Access will be blocked for milliseconds after max failed login attempts performed.",
