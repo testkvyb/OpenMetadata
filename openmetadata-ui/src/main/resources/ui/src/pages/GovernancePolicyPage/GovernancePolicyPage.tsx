@@ -15,13 +15,13 @@ import { Badge, Button, Space, Typography } from 'antd';
 import { AxiosError } from 'axios';
 import classNames from 'classnames';
 import { compare } from 'fast-json-patch';
-import { isUndefined, omit } from 'lodash';
+import { isUndefined } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as PlusIcon } from '../../assets/svg/plus-primary.svg';
-import ClassificationDetails from '../../components/Classifications/ClassificationDetails/ClassificationDetails';
-import { ClassificationDetailsRef } from '../../components/Classifications/ClassificationDetails/ClassificationDetails.interface';
+import StandardDetails from '../../components/GovernancePolicy/StandardDetails/StandardDetails';
+import { StandardDetailsRef } from '../../components/GovernancePolicy/StandardDetails/StandardDetails.interface';
 import ErrorPlaceHolder from '../../components/common/ErrorWithPlaceholder/ErrorPlaceHolder';
 import LeftPanelCard from '../../components/common/LeftPanelCard/LeftPanelCard';
 import Loader from '../../components/common/Loader/Loader';
@@ -36,25 +36,22 @@ import {
   ResourceEntity,
 } from '../../context/PermissionProvider/PermissionProvider.interface';
 import { TabSpecificField } from '../../enums/entity.enum';
-import { CreateClassification } from '../../generated/api/classification/createClassification';
-import {
-  CreateTag,
-  ProviderType,
-} from '../../generated/api/classification/createTag';
-import { Classification } from '../../generated/entity/classification/classification';
-import { Tag } from '../../generated/entity/classification/tag';
+import { CreateGovernancePolicy } from '../../generated/api/governancePolicy/createGovernancePolicy';
+import { CreateGovernanceStandard } from '../../generated/api/governancePolicy/createGovernanceStandard';
+import { GovernancePolicy } from '../../generated/entity/governancePolicy/governancePolicy';
+import { GovernanceStandard } from '../../generated/entity/governancePolicy/governanceStandard';
 import { Operation } from '../../generated/entity/policies/accessControl/rule';
 import { withPageLayout } from '../../hoc/withPageLayout';
 import { useFqn } from '../../hooks/useFqn';
 import {
-  createClassification,
-  createTag,
-  deleteTag,
-  getAllClassifications,
-  getClassificationByName,
-  patchClassification,
-  patchTag,
-} from '../../rest/tagAPI';
+  createGovernancePolicy,
+  createGovernanceStandard,
+  deleteGovernanceStandard,
+  getAllGovernancePolicies,
+  getGovernancePolicyByName,
+  patchGovernancePolicy,
+  patchGovernanceStandard,
+} from '../../rest/governancePolicyAPI';
 import { getCountBadge, getEntityDeleteMessage } from '../../utils/CommonUtils';
 import { getEntityName } from '../../utils/EntityUtils';
 import {
@@ -66,7 +63,6 @@ import { getErrorText } from '../../utils/StringsUtils';
 import { showErrorToast } from '../../utils/ToastUtils';
 import GovernancePolicyForm from './GovernancePolicyForm';
 import { DeleteGovernanceStandardsType, SubmitProps } from './GovernancePolicyPage.interface';
-import { DeleteTagsType } from '../TagsPage/TagsPage.interface';
 
 interface GovernancePolicyPageProps {
   pageTitle?: string;
@@ -77,20 +73,20 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { fqn: policyName } = useFqn();
-  const [governancePolicies, setGovernancePolicies] = useState<Array<Classification>>(
+  const [governancePolicies, setGovernancePolicies] = useState<Array<GovernancePolicy>>(
     []
   );
   const [currentGovernancePolicy, setCurrentGovernancePolicy] =
-    useState<Classification>();
+    useState<GovernancePolicy>();
   const [isAddingGovernancePolicy, setIsAddingGovernancePolicy] =
     useState<boolean>(false);
   const [isAddingGovernanceStandard, setIsAddingGovernanceStandard] = useState<boolean>(false);
-  const [editGovernanceStandard, setEditGovernanceStandard] = useState<Tag>();
+  const [editGovernanceStandard, setEditGovernanceStandard] = useState<GovernanceStandard>();
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const governancePolicyDetailsRef = useRef<ClassificationDetailsRef>(null);
+  const governancePolicyDetailsRef = useRef<StandardDetailsRef>(null);
 
-  const [deleteGovernanceStandards, setDeleteGovernanceStandards] = useState<DeleteTagsType>({
+  const [deleteGovernanceStandards, setDeleteGovernanceStandards] = useState<DeleteGovernanceStandardsType>({
     data: undefined,
     state: false,
   });
@@ -103,7 +99,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     () =>
       checkPermission(
         Operation.Create,
-        ResourceEntity.CLASSIFICATION,
+        ResourceEntity.GOVERNANCE_POLICY,
         permissions
       ),
     [permissions]
@@ -125,7 +121,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     }
     try {
       const response = await getEntityPermission(
-        ResourceEntity.CLASSIFICATION,
+        ResourceEntity.GOVERNANCE_POLICY,
         currentGovernancePolicy?.id
       );
       setGovernancePolicyPermissions(response);
@@ -138,11 +134,11 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     setIsLoading(true);
 
     try {
-      const response = await getAllClassifications({
+      const response = await getAllGovernancePolicies({
         fields: [
-          TabSpecificField.TERM_COUNT,
           TabSpecificField.OWNERS,
           TabSpecificField.DOMAINS,
+          TabSpecificField.REVIEWERS,
         ],
         limit: 1000,
       });
@@ -170,12 +166,11 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     if (currentGovernancePolicy?.fullyQualifiedName !== fqn || update) {
       setIsLoading(true);
       try {
-        const currentGovernancePolicy = await getClassificationByName(fqn, {
+        const currentGovernancePolicy = await getGovernancePolicyByName(fqn, {
           fields: [
             TabSpecificField.OWNERS,
-            TabSpecificField.USAGE_COUNT,
-            TabSpecificField.TERM_COUNT,
             TabSpecificField.DOMAINS,
+            TabSpecificField.REVIEWERS,
           ],
         });
         setCurrentGovernancePolicy(currentGovernancePolicy);
@@ -192,10 +187,29 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     }
   };
 
-  const handleCreateGovernancePolicy = async (data: CreateClassification) => {
+  const handleCreateGovernancePolicy = async (data: SubmitProps) => {
     setIsButtonLoading(true);
     try {
-      const res = await createClassification(data);
+      // Validate required fields for GovernancePolicy
+      if (!data.policyType) {
+        showErrorToast(
+          t('message.field-required', {
+            field: t('label.policy-type'),
+          })
+        );
+        return;
+      }
+
+      const createData: CreateGovernancePolicy = {
+        name: data.name,
+        description: data.description,
+        displayName: data.displayName || '',
+        policyType: data.policyType,
+        status: data.status,
+        reviewDate: data.reviewDate,
+      };
+
+      const res = await createGovernancePolicy(createData);
       await fetchGovernancePolicies();
       navigate(getGovernancePolicyPath(res.fullyQualifiedName));
     } catch (error) {
@@ -246,28 +260,18 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
   }, [currentGovernancePolicy, governancePolicies, setGovernancePolicies]);
 
   /**
-   * Takes policy name and governance standard id and delete the governance standard
-   * @param policyName - governance policy name
-   * @param governanceStandardId -  governance standard id
+   * Deletes a governance standard by its ID
+   * @param governanceStandardId - governance standard id to delete
    */
   const handleDeleteGovernanceStandard = async (governanceStandardId: string) => {
     try {
-      const res = await deleteTag(governanceStandardId);
+      const res = await deleteGovernanceStandard(governanceStandardId);
 
       if (res) {
-        setGovernancePolicies((prevGovernancePolicies) =>
-          prevGovernancePolicies.map((policy) => {
-            if (policy.id === currentGovernancePolicy?.id) {
-              return {
-                ...policy,
-                termCount: (policy.termCount ?? 1) - 1,
-              };
-            }
-
-            return policy;
-          })
-        );
-        governancePolicyDetailsRef.current?.refreshClassificationTags();
+        // Refresh the standards list in the details view
+        governancePolicyDetailsRef.current?.refreshStandards();
+        // Refresh governance policies to update counts
+        await fetchGovernancePolicies();
       } else {
         showErrorToast(
           t('server.delete-entity-error', {
@@ -288,7 +292,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
   };
 
   /**
-   * It redirects to respective function call based on governance standard/GovernancePolicy
+   * Handles the confirmation click for deleting a governance standard
    */
   const handleConfirmClick = useCallback(async () => {
     if (deleteGovernanceStandards.data?.id) {
@@ -297,11 +301,11 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
   }, [deleteGovernanceStandards.data?.id, handleDeleteGovernanceStandard]);
 
   const handleUpdateGovernancePolicy = useCallback(
-    async (updatedGovernancePolicy: Classification) => {
+    async (updatedGovernancePolicy: GovernancePolicy) => {
       if (!isUndefined(currentGovernancePolicy)) {
         const patchData = compare(currentGovernancePolicy, updatedGovernancePolicy);
         try {
-          const data = await patchClassification(
+          const data = await patchGovernancePolicy(
             currentGovernancePolicy?.id,
             patchData
           );
@@ -345,26 +349,26 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     [currentGovernancePolicy, history]
   );
 
-  const handleCreatePrimaryGovernanceStandard = async (data: CreateTag) => {
+  const handleCreatePrimaryGovernanceStandard = async (data: CreateGovernanceStandard) => {
     try {
-      await createTag({
+      if (!currentGovernancePolicy?.fullyQualifiedName) {
+        showErrorToast(
+          t('server.unexpected-error', {
+            entity: t('label.governance-standard-lowercase'),
+          })
+        );
+        return;
+      }
+
+      await createGovernanceStandard({
         ...data,
-        classification: currentGovernancePolicy?.fullyQualifiedName,
+        parent: currentGovernancePolicy.fullyQualifiedName,
       });
 
-      setGovernancePolicies((prevGovernancePolicies) =>
-        prevGovernancePolicies.map((policy) => {
-          if (policy.id === currentGovernancePolicy?.id) {
-            return {
-              ...policy,
-              termCount: (policy.termCount ?? 0) + 1,
-            };
-          }
-
-          return policy;
-        })
-      );
-      governancePolicyDetailsRef.current?.refreshClassificationTags();
+      // Refresh the standards list in the details view
+      governancePolicyDetailsRef.current?.refreshStandards();
+      // Refresh governance policies to update counts
+      await fetchGovernancePolicies();
     } catch (error) {
       if (
         (error as AxiosError).response?.status === HTTP_STATUS_CODE.CONFLICT
@@ -389,14 +393,15 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     }
   };
 
-  const handleUpdatePrimaryGovernanceStandard = async (updatedData: Tag) => {
+  const handleUpdatePrimaryGovernanceStandard = async (updatedData: GovernanceStandard) => {
     if (!isUndefined(editGovernanceStandard)) {
       setIsButtonLoading(true);
       const patchData = compare(editGovernanceStandard, updatedData);
       try {
-        const response = await patchTag(editGovernanceStandard.id, patchData);
+        const response = await patchGovernanceStandard(editGovernanceStandard.id, patchData);
         if (response) {
-          governancePolicyDetailsRef.current?.refreshClassificationTags();
+          // Refresh the standards list in the details view
+          governancePolicyDetailsRef.current?.refreshStandards();
           setEditGovernanceStandard(undefined);
           setIsAddingGovernanceStandard(false);
         }
@@ -426,14 +431,14 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
   };
 
   const handleActionDeleteGovernanceStandard = useCallback(
-    (record: Tag) => {
+    (record: GovernanceStandard) => {
       if (currentGovernancePolicy) {
         setDeleteGovernanceStandards({
           data: {
             id: record.id as string,
             name: record.name,
-            categoryName: currentGovernancePolicy?.fullyQualifiedName,
-            isCategory: false,
+            policyName: currentGovernancePolicy?.fullyQualifiedName,
+            isPolicy: false,
             status: 'waiting',
           },
           state: true,
@@ -443,7 +448,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     [currentGovernancePolicy]
   );
 
-  const handleEditGovernanceStandardClick = useCallback((selectedGovernanceStandard: Tag) => {
+  const handleEditGovernanceStandardClick = useCallback((selectedGovernanceStandard: GovernanceStandard) => {
     setIsAddingGovernanceStandard(true);
     setEditGovernanceStandard(selectedGovernanceStandard);
   }, []);
@@ -460,7 +465,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
 
   useEffect(() => {
     /**
-     * If PolicyName is present then fetch that policy
+     * If policy name is present then fetch that specific policy
      */
     if (policyName) {
       const isTier = policyName.startsWith(TIER_CATEGORY);
@@ -476,7 +481,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     fetchGovernancePolicies(!policyName);
   }, []);
 
-  const onClickGovernancePolicies = (policy: Classification) => {
+  const onClickGovernancePolicies = (policy: GovernancePolicy) => {
     setCurrentGovernancePolicy(policy);
 
     navigate(getGovernancePolicyPath(policy.fullyQualifiedName));
@@ -484,19 +489,28 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
 
   const handleAddGovernanceStandardSubmit = useCallback(
     async (data: SubmitProps) => {
-      const updatedData = omit(data, 'color', 'iconURL');
-      const style = {
-        color: data.color,
-        iconURL: data.iconURL,
-      };
-
       if (editGovernanceStandard) {
-        await handleUpdatePrimaryGovernanceStandard({ ...editGovernanceStandard, ...updatedData, style });
+        await handleUpdatePrimaryGovernanceStandard({ ...editGovernanceStandard, ...data });
       } else {
-        await handleCreatePrimaryGovernanceStandard({ ...updatedData, style });
+        if (!currentGovernancePolicy?.fullyQualifiedName) {
+          showErrorToast(
+            t('server.unexpected-error', {
+              entity: t('label.governance-standard-lowercase'),
+            })
+          );
+          return;
+        }
+
+        const createData: CreateGovernanceStandard = {
+          name: data.name,
+          description: data.description,
+          displayName: data.displayName,
+          parent: currentGovernancePolicy.fullyQualifiedName,
+        };
+        await handleCreatePrimaryGovernanceStandard(createData);
       }
     },
-    [editGovernanceStandard, handleUpdatePrimaryGovernanceStandard, handleCreatePrimaryGovernanceStandard]
+    [editGovernanceStandard, handleUpdatePrimaryGovernanceStandard, handleCreatePrimaryGovernanceStandard, currentGovernancePolicy]
   );
 
   const handleCancelGovernancePolicyDelete = useCallback(() => {
@@ -530,7 +544,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
               )}
             </Space>
 
-            {governancePolicies.map((policy: Classification) => (
+            {governancePolicies.map((policy: GovernancePolicy) => (
               <div
                 className={classNames(
                   'align-center content-box cursor-pointer text-grey-body text-body d-flex p-y-xss p-x-sm m-y-xss',
@@ -558,7 +572,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
                 </Typography.Paragraph>
 
                 {getCountBadge(
-                  policy.termCount,
+                  policy.standards?.length ?? 0,
                   'self-center m-l-auto',
                   currentGovernancePolicy?.fullyQualifiedName ===
                     policy.fullyQualifiedName
@@ -579,7 +593,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
 
   const createGovernanceStandardsPermission = useMemo(
     () =>
-      checkPermission(Operation.Create, ResourceEntity.TAG, permissions) ||
+      checkPermission(Operation.Create, ResourceEntity.GOVERNANCE_STANDARD, permissions) ||
       governancePolicyPermissions.EditAll,
     [permissions, governancePolicyPermissions]
   );
@@ -588,7 +602,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     () =>
       checkPermission(
         Operation.EditDescription,
-        ResourceEntity.TAG,
+        ResourceEntity.GOVERNANCE_STANDARD,
         permissions
       ) || governancePolicyPermissions.EditAll,
     [permissions, governancePolicyPermissions]
@@ -598,7 +612,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
     () =>
       checkPermission(
         Operation.EditDisplayName,
-        ResourceEntity.TAG,
+        ResourceEntity.GOVERNANCE_STANDARD,
         permissions
       ) || governancePolicyPermissions.EditAll,
     [permissions, governancePolicyPermissions]
@@ -606,7 +620,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
 
   const editGovernanceStandardsPermission = useMemo(
     () =>
-      checkPermission(Operation.EditAll, ResourceEntity.TAG, permissions) ||
+      checkPermission(Operation.EditAll, ResourceEntity.GOVERNANCE_STANDARD, permissions) ||
       governancePolicyPermissions.EditAll,
     [permissions, governancePolicyPermissions]
   );
@@ -647,7 +661,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
         ? t('label.edit-entity', {
             entity: t('label.governance-standard'),
           })
-        : t('message.adding-new-tag', {
+        : t('label.adding-new-governance-standard', {
             categoryName: getEntityName(currentGovernancePolicy),
           }),
     [editGovernanceStandard, currentGovernancePolicy]
@@ -679,24 +693,23 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
         secondPanel={{
           children: (
             <>
-              <ClassificationDetails
-                classificationPermissions={governancePolicyPermissions}
-                currentClassification={currentGovernancePolicy}
-                deleteTags={deleteGovernanceStandards}
+              <StandardDetails
+                policyPermissions={governancePolicyPermissions}
+                currentPolicy={currentGovernancePolicy}
+                deleteStandards={deleteGovernanceStandards}
                 disableEditButton={disableEditButton}
-                handleActionDeleteTag={handleActionDeleteGovernanceStandard}
-                handleAddNewTagClick={handleAddNewGovernanceStandardClick}
+                handleActionDeleteStandard={handleActionDeleteGovernanceStandard}
+                handleAddNewStandardClick={handleAddNewGovernanceStandardClick}
                 handleAfterDeleteAction={handleAfterDeleteAction}
-                handleEditTagClick={handleEditGovernanceStandardClick}
-                handleUpdateClassification={handleUpdateGovernancePolicy}
-                isAddingTag={isAddingGovernanceStandard}
+                handleEditStandardClick={handleEditGovernanceStandardClick}
+                handleUpdatePolicy={handleUpdateGovernancePolicy}
+                isAddingStandard={isAddingGovernanceStandard}
                 ref={governancePolicyDetailsRef}
               />
 
               {isAddingGovernancePolicy && (
                 <GovernancePolicyForm
                   isGovernancePolicy
-                  showMutuallyExclusive
                   data={governancePolicies}
                   header={t('label.adding-new-governance-policy')}
                   isEditing={false}
@@ -714,7 +727,7 @@ const GovernancePolicyPage = ({ pageTitle }: GovernancePolicyPageProps) => {
                   initialValues={editGovernanceStandard}
                   isEditing={!isUndefined(editGovernanceStandard)}
                   isLoading={isButtonLoading}
-                  isSystemGovernanceStandard={editGovernanceStandard?.provider === ProviderType.System}
+                  isSystemGovernanceStandard={editGovernanceStandard?.provider === 'system'}
                   isTier={isTier}
                   permissions={governanceStandardsFormPermissions}
                   visible={isAddingGovernanceStandard}

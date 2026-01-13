@@ -176,6 +176,18 @@ export const getGlossaryPath = (fqn?: string) => {
   return path;
 };
 
+export const getGovernancePolicyVersionsPath = (
+  policyFqn: string,
+  version: string
+) => {
+  let path = ROUTES.GOVERNANCE_POLICY_VERSION;
+  path = path
+    .replace(PLACEHOLDER_ROUTE_FQN, getEncodedFqn(policyFqn))
+    .replace(PLACEHOLDER_ROUTE_VERSION, version);
+
+  return path;
+};
+
 export const getApplicationDetailsPath = (fqn: string) => {
   let path = ROUTES.SETTINGS_WITH_CATEGORY_FQN;
 

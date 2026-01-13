@@ -59,9 +59,9 @@
       "$ref": "#/definitions/policyStatus",
       "default": "DRAFT"
     },
-    "domain": {
-      "description": "Business domain or area this policy applies to (e.g., Finance, Healthcare).",
-      "type": "string"
+    "domains": {
+      "description": "Domains that this governance policy belongs to.",
+      "$ref": "../../type/entityReferenceList.json"
     },
     "reviewDate": {
       "description": "Next scheduled review date for this policy in Unix epoch time milliseconds.",
@@ -104,10 +104,6 @@
       "description": "Standards that implement this governance policy. This field is populated only when requested via the 'fields' query parameter.",
       "$ref": "../../type/entityReferenceList.json"
     },
-    "domains": {
-      "description": "Domains this governance policy belongs to.",
-      "$ref": "../../type/entityReferenceList.json"
-    },
     "tags": {
       "description": "Tags associated with this governance policy.",
       "type": "array",
@@ -146,5 +142,3 @@
   "required": ["id", "name", "description", "policyType"],
   "additionalProperties": false
 }
-
-

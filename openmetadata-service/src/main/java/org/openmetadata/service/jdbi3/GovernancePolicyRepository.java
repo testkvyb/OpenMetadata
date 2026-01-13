@@ -17,7 +17,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.openmetadata.schema.entity.governancePolicy.GovernancePolicy;
 import org.openmetadata.schema.type.EntityReference;
-import org.openmetadata.schema.type.Include;
 import org.openmetadata.schema.type.Relationship;
 import org.openmetadata.service.Entity;
 import org.openmetadata.service.resources.governancepolicies.GovernancePolicyResource;
@@ -41,10 +40,10 @@ public class GovernancePolicyRepository extends EntityRepository<GovernancePolic
 
   @Override
   public void setFields(GovernancePolicy entity, Fields fields) {
-    // Set owner and reviewer fields (default behavior)
+    // Set owners (plural) and reviewer fields
     entity.withOwners(fields.contains("owners") ? getOwners(entity) : null)
         .withReviewers(fields.contains("reviewers") ? getReviewers(entity) : null)
-        .withDomain(fields.contains("domain") ? getDomain(entity) : null);
+        .withDomains(fields.contains("domains") ? getDomains(entity) : null);
 
     // LAZY LOADING: Only populate standards when explicitly requested
     if (fields.contains("standards")) {
@@ -56,7 +55,7 @@ public class GovernancePolicyRepository extends EntityRepository<GovernancePolic
   public void clearFields(GovernancePolicy entity, Fields fields) {
     entity.withOwners(fields.contains("owners") ? entity.getOwners() : null)
         .withReviewers(fields.contains("reviewers") ? entity.getReviewers() : null)
-        .withDomain(fields.contains("domain") ? entity.getDomain() : null)
+        .withDomains(fields.contains("domains") ? entity.getDomains() : null)
         .withStandards(fields.contains("standards") ? entity.getStandards() : null);
   }
 
@@ -77,12 +76,12 @@ public class GovernancePolicyRepository extends EntityRepository<GovernancePolic
 
   @Override
   public void storeRelationships(GovernancePolicy entity) {
-    // Store owner relationship
+    // Store owners relationship (plural)
     storeOwners(entity, entity.getOwners());
     // Store reviewer relationship  
-    storeReviewers(entity);
-    // Store domain relationship
-    setDomainRelationship(entity);
+    storeReviewers(entity, entity.getReviewers());
+    // Store domain relationships
+    storeDomains(entity, entity.getDomains());
   }
 
   /**
@@ -104,8 +103,8 @@ public class GovernancePolicyRepository extends EntityRepository<GovernancePolic
     if (!original.getFullyQualifiedName().equals(updated.getFullyQualifiedName())) {
       searchRepository
           .getSearchClient()
-          .reindexAcrossIndices(
-              Entity.GOVERNANCE_STANDARD, "parent.fullyQualifiedName", updated.getFullyQualifiedName());
+          .reindexAcrossIndices("parent.fullyQualifiedName", original.getEntityReference());
     }
   }
 }
+

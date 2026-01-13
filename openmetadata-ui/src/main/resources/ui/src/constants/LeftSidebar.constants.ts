@@ -14,7 +14,7 @@
 import { Cube01 } from '@untitledui/icons';
 import { ReactComponent as GovernIcon } from '../assets/svg/bank.svg';
 import { ReactComponent as ClassificationIcon } from '../assets/svg/classification.svg';
-import { ReactComponent as GovernancePolicyIcon } from '../assets/svg/glossary.svg';
+import { ReactComponent as GovernancePolicyIcon } from '../assets/svg/policies.svg';
 import { ReactComponent as ExploreIcon } from '../assets/svg/explore.svg';
 import { ReactComponent as GlossaryIcon } from '../assets/svg/glossary.svg';
 import { ReactComponent as AlertIcon } from '../assets/svg/ic-alert.svg';

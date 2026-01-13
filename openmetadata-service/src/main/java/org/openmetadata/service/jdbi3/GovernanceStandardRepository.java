@@ -48,14 +48,15 @@ public class GovernanceStandardRepository extends EntityRepository<GovernanceSta
 
   @Override
   public void setFields(GovernanceStandard entity, Fields fields) {
+    // Always set parent (like Tag always sets classification and parent)
+    entity.withParent(getParentEntityRef(entity));
     entity.withOwners(fields.contains("owners") ? getOwners(entity) : null);
-    entity.withParent(fields.contains(PARENT_FIELD) ? getParent(entity) : null);
   }
 
   @Override
   public void clearFields(GovernanceStandard entity, Fields fields) {
+    // Parent is not cleared (always included)
     entity.withOwners(fields.contains("owners") ? entity.getOwners() : null);
-    entity.withParent(fields.contains(PARENT_FIELD) ? entity.getParent() : null);
   }
 
   @Override
@@ -65,13 +66,22 @@ public class GovernanceStandardRepository extends EntityRepository<GovernanceSta
 
   @Override
   public void prepare(GovernanceStandard entity, boolean update) {
-    // Validate parent policy exists
+    // Get full parent policy with FQN to build standard's FQN
     GovernancePolicy parent = getParentPolicy(entity);
     entity.setParent(parent.getEntityReference());
+  }
+
+  @Override
+  public void setFullyQualifiedName(GovernanceStandard standard) {
+    // Parent FQN must be available (set by prepare())
+    if (standard.getParent() == null || standard.getParent().getFullyQualifiedName() == null) {
+      throw new IllegalStateException(
+          "Parent policy FQN must be set before building standard FQN: " + standard.getName());
+    }
     
-    // Build FQN: PolicyName.StandardName
-    entity.setFullyQualifiedName(
-        FullyQualifiedName.add(parent.getFullyQualifiedName(), entity.getName()));
+    // Build hierarchical FQN: ParentPolicyName.StandardName
+    standard.setFullyQualifiedName(
+        FullyQualifiedName.add(standard.getParent().getFullyQualifiedName(), standard.getName()));
   }
 
   @Override
@@ -89,7 +99,7 @@ public class GovernanceStandardRepository extends EntityRepository<GovernanceSta
     storeOwners(entity, entity.getOwners());
     
     // Store parent relationship: Policy CONTAINS Standard
-    storeRelationship(
+    addRelationship(
         entity.getParent().getId(),
         entity.getId(),
         Entity.GOVERNANCE_POLICY,
@@ -106,7 +116,7 @@ public class GovernanceStandardRepository extends EntityRepository<GovernanceSta
   /**
    * Retrieve the parent governance policy reference for this standard.
    */
-  private EntityReference getParent(GovernanceStandard standard) {
+  private EntityReference getParentEntityRef(GovernanceStandard standard) {
     return getFromEntityRef(standard.getId(), Relationship.CONTAINS, Entity.GOVERNANCE_POLICY, true);
   }
 
@@ -117,14 +127,14 @@ public class GovernanceStandardRepository extends EntityRepository<GovernanceSta
     EntityReference parentRef = standard.getParent();
     if (parentRef == null) {
       throw new IllegalArgumentException(
-          CatalogExceptionMessage.missingRequiredField("parent", Entity.GOVERNANCE_STANDARD));
+          "Parent governance policy is required for governance standard");
     }
 
     GovernancePolicyRepository policyRepository =
         (GovernancePolicyRepository) Entity.getEntityRepository(Entity.GOVERNANCE_POLICY);
     
     GovernancePolicy policy =
-        policyRepository.get(null, parentRef.getId(), policyRepository.getFields("id,name"));
+        policyRepository.get(null, parentRef.getId(), policyRepository.getFields("id,name,fullyQualifiedName"));
     
     if (policy == null) {
       throw new IllegalArgumentException(
@@ -143,25 +153,14 @@ public class GovernanceStandardRepository extends EntityRepository<GovernanceSta
     }
 
     @Override
-    public void entitySpecificUpdate() {
+    public void entitySpecificUpdate(boolean consolidatingChanges) {
+      super.entitySpecificUpdate(consolidatingChanges);
       // Prevent changing parent
       if (!entityReferenceMatch.test(original.getParent(), updated.getParent())) {
         throw new IllegalArgumentException(
             CatalogExceptionMessage.readOnlyAttribute(
                 Entity.GOVERNANCE_STANDARD, PARENT_FIELD));
       }
-    }
-  }
-
-  @Override
-  public void entityRelationshipReindex(GovernanceStandard original, GovernanceStandard updated) {
-    super.entityRelationshipReindex(original, updated);
-    
-    // If FQN changed (parent renamed), update FQN
-    if (!Objects.equals(original.getFullyQualifiedName(), updated.getFullyQualifiedName())) {
-      searchRepository
-          .getSearchClient()
-          .updateEntity(updated.getId().toString(), "fullyQualifiedName", updated.getFullyQualifiedName());
     }
   }
 }

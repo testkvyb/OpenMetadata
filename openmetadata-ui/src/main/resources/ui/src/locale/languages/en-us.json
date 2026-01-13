@@ -1959,15 +1959,23 @@
     "data-access-request-id": "Request ID",
     "data-access-request-action-plural": "Request Actions",
     "create-data-access-request": "Create Data Access Request",
-    "governance-policy": "Governance Policy",
-    "governance-policy-plural": "Governance Policies",
     "governance-policy-lowercase": "governance policy",
     "governance-policy-lowercase-plural": "governance policies",
+    "policy-type": "Policy Type",
+    "privacy": "Privacy",
+    "draft": "Draft",
+    "deprecated": "Deprecated",
+    "under-review": "Under Review",
+    "review-date": "Review Date",
+    "governance-policy": "Governance Policy",
+    "governance-policy-plural": "Governance Policies",
     "governance-standard": "Governance Standard",
     "governance-standard-plural": "Governance Standards",
     "governance-standard-lowercase": "governance standard",
     "governance-standard-lowercase-plural": "governance standards",
-    "adding-new-governance-policy": "Adding New Governance Policy"
+    "no-permission-for-action": "You do not have permission for this action",
+    "adding-new-governance-policy": "Adding New Governance Policy",
+    "adding-new-governance-standard": "Adding new standard on {{policyName}}"
   },
   "message": {
     "access-block-time-message": "Access will be blocked for milliseconds after max failed login attempts performed.",
@@ -2746,7 +2754,8 @@
     "maximum-length-field": "{{field}} cannot exceed {{length}} characters",
     "minimum-duration-error": "Access duration must be at least {{min}} days",
     "maximum-duration-error": "Access duration cannot exceed {{max}} days",
-    "adding-new-standard": "Adding new standard on {{categoryName}}"
+    "enter-rule-definition": "Enter rule definition or guidance text",
+    "select-governance-policy-to-view-details": "Select a governance policy from the left panel to view details and standards."
   },
   "server": {
     "account-verify-success": "Email verified successfully",

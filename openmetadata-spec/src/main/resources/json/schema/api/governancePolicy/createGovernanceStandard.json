@@ -25,6 +25,10 @@
       "description": "Reference to the parent Governance Policy.",
       "$ref": "../../type/basic.json#/definitions/entityName"
     },
+    "rule": {
+      "description": "Rule definition or guidance text for this standard.",
+      "type": "string"
+    },
     "owners": {
       "description": "Owners of this standard.",
       "$ref": "../../type/entityReferenceList.json",

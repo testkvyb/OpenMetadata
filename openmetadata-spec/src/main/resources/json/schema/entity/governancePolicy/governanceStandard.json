@@ -32,6 +32,10 @@
       "description": "Reference to the parent Governance Policy that contains this standard.",
       "$ref": "../../type/entityReference.json"
     },
+    "rule": {
+      "description": "Rule definition or guidance text for this standard.",
+      "type": "string"
+    },
     "version": {
       "description": "Metadata version of the entity.",
       "$ref": "../../type/entityHistory.json#/definitions/entityVersion"

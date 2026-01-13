@@ -1166,12 +1166,11 @@ CREATE TABLE `web_analytic_event` (
 
 --
 -- Table structure for table `governance_policy`
---
 
-DROP TABLE IF EXISTS `governance_policy`;
+DROP TABLE IF EXISTS `governance_policy_entity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `governance_policy` (
+CREATE TABLE `governance_policy_entity` (
   `id` varchar(36) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.id'))) STORED NOT NULL,
   `name` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.name'))) VIRTUAL NOT NULL,
   `json` json NOT NULL,
@@ -1179,26 +1178,29 @@ CREATE TABLE `governance_policy` (
   `updatedBy` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.updatedBy'))) VIRTUAL NOT NULL,
   `deleted` tinyint(1) GENERATED ALWAYS AS (json_extract(`json`,_utf8mb4'$.deleted')) VIRTUAL,
   `nameHash` varchar(256) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `nameHash` (`nameHash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `governance_standard`
+-- Table structure for table `governance_standard_entity`
 --
 
-DROP TABLE IF EXISTS `governance_standard`;
+DROP TABLE IF EXISTS `governance_standard_entity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `governance_standard` (
+CREATE TABLE `governance_standard_entity` (
   `id` varchar(36) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.id'))) STORED NOT NULL,
+  `name` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.name'))) VIRTUAL NOT NULL,
   `json` json NOT NULL,
   `updatedAt` bigint unsigned GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.updatedAt'))) VIRTUAL NOT NULL,
   `updatedBy` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.updatedBy'))) VIRTUAL NOT NULL,
   `deleted` tinyint(1) GENERATED ALWAYS AS (json_extract(`json`,_utf8mb4'$.deleted')) VIRTUAL,
   `fqnHash` varchar(768) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
-  `name` varchar(256) GENERATED ALWAYS AS (json_unquote(json_extract(`json`,_utf8mb4'$.name'))) VIRTUAL NOT NULL,
+  `governancePolicyHash` varchar(256) GENERATED ALWAYS AS (SUBSTRING_INDEX(`fqnHash`,_utf8mb4'.',1)) STORED,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `fqnHash` (`fqnHash`)
+  UNIQUE KEY `fqnHash` (`fqnHash`),
+  KEY `idx_governance_standard_policy_hash_deleted` (`governancePolicyHash`,`deleted`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

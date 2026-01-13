@@ -27,6 +27,8 @@ public class GovernanceStandardMapper
     EntityReference parentRef =
         Entity.getEntityReferenceByName(Entity.GOVERNANCE_POLICY, create.getParent(), null);
 
-    return copy(new GovernanceStandard(), create, user).withParent(parentRef);
+    return copy(new GovernanceStandard(), create, user)
+        .withParent(parentRef)
+        .withRule(create.getRule());
   }
 }

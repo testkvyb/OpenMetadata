@@ -12,20 +12,19 @@
  */
 
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Modal, Space, Typography } from 'antd';
+import { Button, DatePicker, Form, Modal, Space, Typography } from 'antd';
 import { isArray } from 'lodash';
+import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DomainLabel } from '../../components/common/DomainLabel/DomainLabel.component';
 import { EntityAttachmentProvider } from '../../components/common/EntityDescription/EntityAttachmentProvider/EntityAttachmentProvider';
 import { OwnerLabel } from '../../components/common/OwnerLabel/OwnerLabel.component';
 import { VALIDATION_MESSAGES } from '../../constants/constants';
-import {
-  HEX_COLOR_CODE_REGEX,
-  TAG_NAME_REGEX,
-} from '../../constants/regex.constants';
+import { TAG_NAME_REGEX } from '../../constants/regex.constants';
 import { DEFAULT_FORM_VALUE } from '../../constants/Tags.constant';
 import { EntityType } from '../../enums/entity.enum';
+import { PolicyStatus, PolicyType } from '../../generated/entity/governancePolicy/governancePolicy';
 import { EntityReference } from '../../generated/tests/testCase';
 import { useDomainStore } from '../../hooks/useDomainStore';
 import { useEntityRules } from '../../hooks/useEntityRules';
@@ -33,7 +32,6 @@ import {
   FieldProp,
   FieldTypes,
   FormItemLayout,
-  HelperTextType,
 } from '../../interface/FormUtils.interface';
 import { generateFormFields, getField } from '../../utils/formUtils';
 import { GovernancePolicyFormProps, SubmitProps } from './GovernancePolicyPage.interface';
@@ -44,7 +42,6 @@ const GovernancePolicyForm = ({
   header,
   initialValues,
   onSubmit,
-  showMutuallyExclusive = false,
   isLoading,
   isSystemGovernanceStandard,
   permissions,
@@ -55,16 +52,12 @@ const GovernancePolicyForm = ({
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
-  const { entityRules } = useEntityRules(EntityType.CLASSIFICATION);
+  const { entityRules } = useEntityRules(EntityType.GOVERNANCE_POLICY);
   const selectedDomain = Form.useWatch<EntityReference[] | undefined>(
     'domains',
     form
   );
 
-  const isMutuallyExclusive = Form.useWatch<boolean | undefined>(
-    'mutuallyExclusive',
-    form
-  );
   const selectedOwners =
     Form.useWatch<EntityReference | EntityReference[]>('owners', form) ?? [];
 
@@ -74,12 +67,14 @@ const GovernancePolicyForm = ({
   const { activeDomainEntityRef } = useDomainStore();
 
   useEffect(() => {
-    form.setFieldsValue({
-      ...initialValues,
-      iconURL: initialValues?.style?.iconURL,
-      color: initialValues?.style?.color,
-    });
-  }, [initialValues]);
+    const formData: any = { ...initialValues };
+    
+    if (isGovernancePolicy && initialValues && 'reviewDate' in initialValues && initialValues.reviewDate) {
+      formData.reviewDate = dayjs(initialValues.reviewDate);
+    }
+    
+    form.setFieldsValue(formData);
+  }, [initialValues, isGovernancePolicy]);
 
   const disableNameField = useMemo(
     () => isEditing && isSystemGovernanceStandard,
@@ -99,19 +94,6 @@ const GovernancePolicyForm = ({
       isEditing
         ? !(permissions?.editDescription || permissions?.editAll)
         : !(permissions?.createGovernanceStandards || isGovernancePolicy),
-    [isEditing, isGovernancePolicy, permissions]
-  );
-
-  const disableDisabledField = useMemo(
-    () =>
-      isEditing
-        ? !permissions?.editAll
-        : !(permissions?.createGovernanceStandards || isGovernancePolicy),
-    [isEditing, isGovernancePolicy, permissions]
-  );
-
-  const disableMutuallyExclusiveField = useMemo(
-    () => (isEditing ? !permissions?.editAll : !isGovernancePolicy),
     [isEditing, isGovernancePolicy, permissions]
   );
 
@@ -229,88 +211,52 @@ const GovernancePolicyForm = ({
     ...(!isGovernancePolicy
       ? [
           {
-            name: 'iconURL',
-            id: 'root/iconURL',
-            label: t('label.icon-url'),
+            name: 'rule',
             required: false,
-            placeholder: t('label.icon-url'),
+            label: t('label.rule'),
+            id: 'root/rule',
             type: FieldTypes.TEXT,
-            helperText: t('message.govern-url-size-message'),
             props: {
-              'data-testid': 'icon-url',
-              tooltipPlacement: 'right',
+              'data-testid': 'rule',
+              placeholder: t('message.enter-rule-definition'),
+              rows: 4,
             },
-          },
-          {
-            name: 'color',
-            id: 'root/color',
-            label: t('label.color'),
-            required: false,
-            type: FieldTypes.COLOR_PICKER,
-            rules: [
-              {
-                pattern: HEX_COLOR_CODE_REGEX,
-                message: t('message.hex-color-validation'),
-              },
-            ],
           },
         ]
       : []),
-    ...(isSystemGovernanceStandard && !isTier
-      ? ([
+    ...(isGovernancePolicy
+      ? [
           {
-            name: 'disabled',
-            required: false,
-            label: t('label.disable-tag'),
-            id: 'root/disabled',
-            type: FieldTypes.SWITCH,
-            formItemLayout: 'horizontal',
+            name: 'policyType',
+            id: 'root/policyType',
+            label: t('label.policy-type'),
+            required: true,
+            type: FieldTypes.SELECT,
             props: {
-              'data-testid': 'disabled',
-              initialValue: initialValues?.disabled ?? false,
-              disabled: disableDisabledField,
+              'data-testid': 'policy-type',
+              placeholder: t('label.select-field', { field: t('label.policy-type') }),
+              options: [
+                { label: t('label.security'), value: PolicyType.Security },
+                { label: t('label.data-quality'), value: PolicyType.DataQuality },
+                { label: t('label.retention'), value: PolicyType.Retention },
+                { label: t('label.privacy'), value: PolicyType.Privacy },
+              ],
             },
-          },
-        ] as FieldProp[])
-      : []),
-    ...(showMutuallyExclusive
-      ? ([
-          {
-            name: 'mutuallyExclusive',
-            label: t('label.mutually-exclusive'),
-            type: FieldTypes.SWITCH,
-            required: false,
-            props: {
-              'data-testid': 'mutually-exclusive-button',
-              disabled: disableMutuallyExclusiveField,
-            },
-            helperText: t('message.mutually-exclusive-alert', {
-              entity: t('label.governance-policy'),
-              'child-entity': t('label.governance-standard'),
-            }),
-            helperTextType: HelperTextType.ALERT,
-            showHelperText: Boolean(isMutuallyExclusive),
-            id: 'root/mutuallyExclusive',
-            formItemLayout: 'horizontal',
-            formItemProps: {
-              valuePropName: 'checked',
-            },
-          },
-        ] as FieldProp[])
+          }
+        ]
       : []),
   ];
 
   const handleSave = async (data: SubmitProps) => {
+    setSaving(true);
     try {
-      setSaving(true);
-      const submitData = {
+      const submitData: SubmitProps = {
         ...data,
-        domains: selectedDomain
-          ? (isArray(selectedDomain) ? selectedDomain : [selectedDomain])?.map(
-              (domain) => domain.fullyQualifiedName
-            )
-          : undefined,
+        ...(isGovernancePolicy && data.reviewDate 
+          ? { reviewDate: dayjs(data.reviewDate).valueOf() } 
+          : {}),
       };
+
       await onSubmit(submitData);
       form.setFieldsValue(DEFAULT_FORM_VALUE);
     } catch {
@@ -347,7 +293,7 @@ const GovernancePolicyForm = ({
       <EntityAttachmentProvider
         entityFqn={initialValues?.fullyQualifiedName}
         entityType={
-          isGovernancePolicy ? EntityType.CLASSIFICATION : EntityType.TAG
+          isGovernancePolicy ? EntityType.GOVERNANCE_POLICY : EntityType.GOVERNANCE_STANDARD
         }>
         <Form
           form={form}
@@ -357,6 +303,18 @@ const GovernancePolicyForm = ({
           validateMessages={VALIDATION_MESSAGES}
           onFinish={handleSave}>
           {generateFormFields(formFields)}
+          {isGovernancePolicy && (
+            <Form.Item
+              label={t('label.review-date')}
+              name="reviewDate">
+              <DatePicker
+                className="w-full"
+                data-testid="review-date-picker"
+                format="YYYY-MM-DD"
+                placeholder={t('label.select-field', { field: t('label.review-date') })}
+              />
+            </Form.Item>
+          )}
           <div className="m-y-xs">
             {getField(ownerField)}
             {Boolean(ownersList.length) && (
@@ -373,7 +331,7 @@ const GovernancePolicyForm = ({
                 entityFqn=""
                 entityId=""
                 entityType={
-                  isGovernancePolicy ? EntityType.CLASSIFICATION : EntityType.TAG
+                  isGovernancePolicy ? EntityType.GOVERNANCE_POLICY : EntityType.GOVERNANCE_STANDARD
                 }
                 hasPermission={false}
               />

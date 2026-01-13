@@ -29,10 +29,6 @@
       "$ref": "../../entity/governancePolicy/governancePolicy.json#/definitions/policyStatus",
       "default": "DRAFT"
     },
-    "domain": {
-      "description": "Business domain or area this policy applies to (e.g., Finance, Healthcare).",
-      "type": "string"
-    },
     "reviewDate": {
       "description": "Next scheduled review date for this policy in Unix epoch time milliseconds.",
       "$ref": "../../type/basic.json#/definitions/timestamp"

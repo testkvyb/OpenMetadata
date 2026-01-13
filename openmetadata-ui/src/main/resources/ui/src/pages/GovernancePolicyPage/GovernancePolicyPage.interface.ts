@@ -12,8 +12,9 @@
  */
 
 import { LoadingState } from 'Models';
-import { Classification } from '../../generated/entity/classification/classification';
-import { Tag } from '../../generated/entity/classification/tag';
+import { EntityReference } from '../../generated/entity/data/table';
+import { GovernancePolicy, PolicyStatus, PolicyType } from '../../generated/entity/governancePolicy/governancePolicy';
+import { GovernanceStandard } from '../../generated/entity/governancePolicy/governanceStandard';
 
 export type DeleteGovernanceStandardDetailsType = {
   id: string;
@@ -31,10 +32,13 @@ export type DeleteGovernanceStandardsType = {
 export interface SubmitProps {
   name: string;
   description: string;
-  displayName: string;
-  mutuallyExclusive?: boolean;
-  iconURL?: string;
-  color?: string;
+  displayName?: string;
+  // Governance Policy specific fields
+  policyType?: PolicyType;
+  status?: PolicyStatus;
+  domain?: string;
+  reviewDate?: number;
+  rule?: string
 }
 
 export interface GovernancePolicyFormProps {
@@ -43,11 +47,10 @@ export interface GovernancePolicyFormProps {
   isTier: boolean;
   onCancel: () => void;
   header: string;
-  initialValues?: Omit<Tag, 'id'>;
+  initialValues?: Partial<GovernancePolicy> | Partial<GovernanceStandard>;
   onSubmit: (value: SubmitProps) => Promise<void>;
-  showMutuallyExclusive?: boolean;
   isGovernancePolicy?: boolean;
-  data?: Classification[];
+  data?: GovernancePolicy[];
   isLoading: boolean;
   isSystemGovernanceStandard?: boolean;
   permissions?: {
@@ -57,3 +60,7 @@ export interface GovernancePolicyFormProps {
     editAll?: boolean;
   };
 }
+
+
+
+

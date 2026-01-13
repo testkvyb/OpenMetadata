@@ -4401,7 +4401,7 @@ public interface CollectionDAO {
   interface GovernancePolicyDAO extends EntityDAO<GovernancePolicy> {
     @Override
     default String getTableName() {
-      return "governance_policy";
+      return "governance_policy_entity";
     }
 
     @Override
@@ -4418,7 +4418,7 @@ public interface CollectionDAO {
   interface GovernanceStandardDAO extends EntityDAO<GovernanceStandard> {
     @Override
     default String getTableName() {
-      return "governance_standard";
+      return "governance_standard_entity";
     }
 
     @Override
@@ -4429,6 +4429,85 @@ public interface CollectionDAO {
     @Override
     default String getNameHashColumn() {
       return "fqnHash";
+    }
+
+    @Override
+    default int listCount(ListFilter filter) {
+      String parent = filter.getQueryParam("parent");
+
+      // If parent parameter is provided, filter standards by parent policy FQN
+      if (parent != null) {
+        String parentFqnHash = FullyQualifiedName.buildHash(parent);
+        filter.queryParams.put("parentFqnPrefix", parentFqnHash + ".%");
+        String condition = filter.getCondition("governance_standard_entity");
+        if (!condition.isEmpty()) {
+          condition = String.format("%s AND fqnHash LIKE :parentFqnPrefix", condition);
+        } else {
+          condition = "WHERE fqnHash LIKE :parentFqnPrefix";
+        }
+        return listCount(
+            getTableName(), getNameHashColumn(), filter.getQueryParams(), condition, condition);
+      }
+
+      // Default behavior
+      return EntityDAO.super.listCount(filter);
+    }
+
+    @Override
+    default List<String> listBefore(
+        ListFilter filter, int limit, String beforeName, String beforeId) {
+      String parent = filter.getQueryParam("parent");
+
+      // If parent parameter is provided, filter standards by parent policy FQN
+      if (parent != null) {
+        String parentFqnHash = FullyQualifiedName.buildHash(parent);
+        filter.queryParams.put("parentFqnPrefix", parentFqnHash + ".%");
+        String condition = filter.getCondition("governance_standard_entity");
+        if (!condition.isEmpty()) {
+          condition = String.format("%s AND fqnHash LIKE :parentFqnPrefix", condition);
+        } else {
+          condition = "WHERE fqnHash LIKE :parentFqnPrefix";
+        }
+        return listBefore(
+            getTableName(),
+            filter.getQueryParams(),
+            condition,
+            condition,
+            limit,
+            beforeName,
+            beforeId);
+      }
+
+      // Default behavior
+      return EntityDAO.super.listBefore(filter, limit, beforeName, beforeId);
+    }
+
+    @Override
+    default List<String> listAfter(ListFilter filter, int limit, String afterName, String afterId) {
+      String parent = filter.getQueryParam("parent");
+
+      // If parent parameter is provided, filter standards by parent policy FQN
+      if (parent != null) {
+        String parentFqnHash = FullyQualifiedName.buildHash(parent);
+        filter.queryParams.put("parentFqnPrefix", parentFqnHash + ".%");
+        String condition = filter.getCondition("governance_standard_entity");
+        if (!condition.isEmpty()) {
+          condition = String.format("%s AND fqnHash LIKE :parentFqnPrefix", condition);
+        } else {
+          condition = "WHERE fqnHash LIKE :parentFqnPrefix";
+        }
+        return listAfter(
+            getTableName(),
+            filter.getQueryParams(),
+            condition,
+            condition,
+            limit,
+            afterName,
+            afterId);
+      }
+
+      // Default behavior
+      return EntityDAO.super.listAfter(filter, limit, afterName, afterId);
     }
   }
 
@@ -8653,4 +8732,3 @@ public interface CollectionDAO {
     }
   }
 }
-

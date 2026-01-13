@@ -15,18 +15,21 @@ package org.openmetadata.service.resources.governancepolicies;
 
 import org.openmetadata.schema.api.governancePolicy.CreateGovernancePolicy;
 import org.openmetadata.schema.entity.governancePolicy.GovernancePolicy;
+import org.openmetadata.schema.type.EntityReference;
+import org.openmetadata.service.Entity;
 import org.openmetadata.service.mapper.EntityMapper;
+import org.openmetadata.service.util.EntityUtil;
 
 public class GovernancePolicyMapper
-    implements EntityMapper<GovernancePolicy, CreateGovernancePolicy> {
-  @Override
-  public GovernancePolicy createToEntity(CreateGovernancePolicy create, String user) {
-    return copy(new GovernancePolicy(), create, user)
-        .withFullyQualifiedName(create.getName())
-        .withPolicyType(create.getPolicyType())
-        .withStatus(create.getStatus())
-        .withDomain(create.getDomain())
-        .withReviewDate(create.getReviewDate())
-        .withMutuallyExclusive(create.getMutuallyExclusive());
-  }
+        implements EntityMapper<GovernancePolicy, CreateGovernancePolicy> {
+    @Override
+    public GovernancePolicy createToEntity(CreateGovernancePolicy create, String user) {
+        return copy(new GovernancePolicy(), create, user)
+                .withFullyQualifiedName(create.getName())
+                .withPolicyType(create.getPolicyType())
+                .withStatus(create.getStatus())
+                .withDomains(EntityUtil.getEntityReferences(Entity.DOMAIN, create.getDomains()))
+                .withReviewDate(create.getReviewDate())
+                .withMutuallyExclusive(create.getMutuallyExclusive());
+    }
 }

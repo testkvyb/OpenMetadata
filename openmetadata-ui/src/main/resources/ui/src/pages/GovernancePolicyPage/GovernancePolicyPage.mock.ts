@@ -22,7 +22,6 @@ export const MOCK_ALL_GOVERNANCE_POLICIES = {
       updatedAt: 1672147362401,
       updatedBy: 'admin',
       href: 'http://localhost:8585/api/v1/classifications/5e77a82e-4bc8-46eb-af52-a383a505eea6',
-      termCount: 3,
       changeDescription: {
         fieldsAdded: [],
         fieldsUpdated: [
