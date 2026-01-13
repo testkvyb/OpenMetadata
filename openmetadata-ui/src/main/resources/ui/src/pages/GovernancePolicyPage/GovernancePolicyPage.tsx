@@ -20,20 +20,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as PlusIcon } from '../../assets/svg/plus-primary.svg';
-import StandardDetails from '../../components/GovernancePolicy/StandardDetails/StandardDetails';
-import { StandardDetailsRef } from '../../components/GovernancePolicy/StandardDetails/StandardDetails.interface';
 import ErrorPlaceHolder from '../../components/common/ErrorWithPlaceholder/ErrorPlaceHolder';
 import LeftPanelCard from '../../components/common/LeftPanelCard/LeftPanelCard';
 import Loader from '../../components/common/Loader/Loader';
 import ResizableLeftPanels from '../../components/common/ResizablePanels/ResizableLeftPanels';
 import TagsLeftPanelSkeleton from '../../components/common/Skeleton/Tags/TagsLeftPanelSkeleton.component';
+import StandardDetails from '../../components/GovernancePolicy/StandardDetails/StandardDetails';
+import { StandardDetailsRef } from '../../components/GovernancePolicy/StandardDetails/StandardDetails.interface';
 import EntityDeleteModal from '../../components/Modals/EntityDeleteModal/EntityDeleteModal';
 import { HTTP_STATUS_CODE } from '../../constants/Auth.constants';
 import { TIER_CATEGORY } from '../../constants/constants';
 import { usePermissionProvider } from '../../context/PermissionProvider/PermissionProvider';
 import {
-  OperationPermission,
-  ResourceEntity,
+    OperationPermission,
+    ResourceEntity
 } from '../../context/PermissionProvider/PermissionProvider.interface';
 import { TabSpecificField } from '../../enums/entity.enum';
 import { CreateGovernancePolicy } from '../../generated/api/governancePolicy/createGovernancePolicy';
@@ -44,19 +44,19 @@ import { Operation } from '../../generated/entity/policies/accessControl/rule';
 import { withPageLayout } from '../../hoc/withPageLayout';
 import { useFqn } from '../../hooks/useFqn';
 import {
-  createGovernancePolicy,
-  createGovernanceStandard,
-  deleteGovernanceStandard,
-  getAllGovernancePolicies,
-  getGovernancePolicyByName,
-  patchGovernancePolicy,
-  patchGovernanceStandard,
+    createGovernancePolicy,
+    createGovernanceStandard,
+    deleteGovernanceStandard,
+    getAllGovernancePolicies,
+    getGovernancePolicyByName,
+    patchGovernancePolicy,
+    patchGovernanceStandard
 } from '../../rest/governancePolicyAPI';
 import { getCountBadge, getEntityDeleteMessage } from '../../utils/CommonUtils';
 import { getEntityName } from '../../utils/EntityUtils';
 import {
-  checkPermission,
-  DEFAULT_ENTITY_PERMISSION,
+    checkPermission,
+    DEFAULT_ENTITY_PERMISSION
 } from '../../utils/PermissionsUtils';
 import { getGovernancePolicyPath } from '../../utils/RouterUtils';
 import { getErrorText } from '../../utils/StringsUtils';

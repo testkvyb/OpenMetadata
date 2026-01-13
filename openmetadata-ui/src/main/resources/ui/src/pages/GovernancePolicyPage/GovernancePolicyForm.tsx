@@ -13,7 +13,6 @@
 
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Form, Modal, Space, Typography } from 'antd';
-import { isArray } from 'lodash';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,14 +23,14 @@ import { VALIDATION_MESSAGES } from '../../constants/constants';
 import { TAG_NAME_REGEX } from '../../constants/regex.constants';
 import { DEFAULT_FORM_VALUE } from '../../constants/Tags.constant';
 import { EntityType } from '../../enums/entity.enum';
-import { PolicyStatus, PolicyType } from '../../generated/entity/governancePolicy/governancePolicy';
+import { PolicyType } from '../../generated/entity/governancePolicy/governancePolicy';
 import { EntityReference } from '../../generated/tests/testCase';
 import { useDomainStore } from '../../hooks/useDomainStore';
 import { useEntityRules } from '../../hooks/useEntityRules';
 import {
-  FieldProp,
-  FieldTypes,
-  FormItemLayout,
+    FieldProp,
+    FieldTypes,
+    FormItemLayout
 } from '../../interface/FormUtils.interface';
 import { generateFormFields, getField } from '../../utils/formUtils';
 import { GovernancePolicyFormProps, SubmitProps } from './GovernancePolicyPage.interface';

@@ -12,7 +12,6 @@
  */
 
 import { LoadingState } from 'Models';
-import { EntityReference } from '../../generated/entity/data/table';
 import { GovernancePolicy, PolicyStatus, PolicyType } from '../../generated/entity/governancePolicy/governancePolicy';
 import { GovernanceStandard } from '../../generated/entity/governancePolicy/governanceStandard';
 

@@ -17,28 +17,28 @@ import ButtonGroup from 'antd/lib/button/button-group';
 import { ColumnsType } from 'antd/lib/table';
 import { AxiosError } from 'axios';
 import classNames from 'classnames';
-import { capitalize, isEmpty, isUndefined, toString } from 'lodash';
 import dayjs from 'dayjs';
+import { capitalize, isEmpty, isUndefined, toString } from 'lodash';
 import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useState,
+    forwardRef,
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useMemo,
+    useState
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ReactComponent as IconPolicy } from '../../../assets/svg/policies-colored.svg';
 import { ReactComponent as LockIcon } from '../../../assets/svg/closed-lock.svg';
-import { ReactComponent as VersionIcon } from '../../../assets/svg/ic-version.svg';
 import { ReactComponent as IconEdit } from '../../../assets/svg/edit-new.svg';
 import { ReactComponent as IconDelete } from '../../../assets/svg/ic-delete.svg';
+import { ReactComponent as VersionIcon } from '../../../assets/svg/ic-version.svg';
+import { ReactComponent as IconPolicy } from '../../../assets/svg/policies-colored.svg';
 import { DE_ACTIVE_COLOR } from '../../../constants/constants';
 import { CustomizeEntityType } from '../../../constants/Customize.constants';
 import { usePermissionProvider } from '../../../context/PermissionProvider/PermissionProvider';
 import { ResourceEntity } from '../../../context/PermissionProvider/PermissionProvider.interface';
-import { EntityType, TabSpecificField } from '../../../enums/entity.enum';
+import { EntityType } from '../../../enums/entity.enum';
 import { GovernancePolicy, PolicyStatus } from '../../../generated/entity/governancePolicy/governancePolicy';
 import { GovernanceStandard } from '../../../generated/entity/governancePolicy/governanceStandard';
 import { Operation } from '../../../generated/entity/policies/policy';
@@ -50,8 +50,8 @@ import { getAllGovernanceStandards } from '../../../rest/governancePolicyAPI';
 import { getEntityName } from '../../../utils/EntityUtils';
 import { checkPermission } from '../../../utils/PermissionsUtils';
 import {
-  getGovernancePolicyPath,
-  getGovernancePolicyVersionsPath,
+    getGovernancePolicyPath,
+    getGovernancePolicyVersionsPath
 } from '../../../utils/RouterUtils';
 import { getErrorText } from '../../../utils/StringsUtils';
 import { showErrorToast } from '../../../utils/ToastUtils';
